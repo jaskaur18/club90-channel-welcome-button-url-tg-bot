@@ -1,0 +1,13 @@
+{
+  "name": "club90-channel-welcome-bot",
+  "version": "1.0",
+  "description": "club90 channel welcome button url tg bot",
+  "main": "index.js",
+  "repository": "https://www.fiverr.com/honey_devv",
+  "author": "https://www.fiverr.com/honey_devv",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "telegraf": "3.38"
+  }
+}
