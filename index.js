@@ -38,17 +38,22 @@ const init = async (bot,) => {
      */
     // bot.hears(/[\S\s]*/, hearsHandler())
     bot.on('new_chat_members', async (ctx) => {
-        await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
-            if (err) {
-                console.log(err);
-            } else {
-                obj = JSON.parse(data); //now it an object
-                button = obj.welcome[0]
-                message = button.message
-                url = button.url
-                await ctx.reply(`${message}`, { reply_markup: { inline_keyboard: url } })
-            }
-        });
+        try {
+            await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    obj = JSON.parse(data); //now it an object
+                    button = obj.welcome[0]
+                    message = button.message
+                    url = button.url
+                    await ctx.reply(`${message}`, { reply_markup: { inline_keyboard: url } })
+                }
+            });
+        } catch (err) {
+            ctx.reply(err)
+        }
+
     })
     // bot.on('left_chat_member', leftChatMemberHandler())
 
@@ -74,19 +79,23 @@ const init = async (bot,) => {
     })
 
     bot.command('send', async (ctx) => {
-        await ctx.reply(`Welcome To The Bot`)
-        username = (ctx.message.text).split(" ")[1]
-        await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
-            if (err) {
-                console.log(err);
-            } else {
-                obj = JSON.parse(data); //now it an object
-                button = obj.welcome[0]
-                message = button.message
-                url = button.url
-                await ctx.telegram.sendMessage(username, `${message}`, { reply_markup: { inline_keyboard: url } })
-            }
-        });
+        try {
+            await ctx.reply(`Welcome To The Bot`)
+            username = (ctx.message.text).split(" ")[1]
+            await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    obj = JSON.parse(data); //now it an object
+                    button = obj.welcome[0]
+                    message = button.message
+                    url = button.url
+                    await ctx.telegram.sendMessage(username, `${message}`, { reply_markup: { inline_keyboard: url } })
+                }
+            });
+        } catch (err) {
+            ctx.reply(err)
+        }
 
     })
 
