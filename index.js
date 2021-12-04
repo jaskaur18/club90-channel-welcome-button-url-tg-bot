@@ -4,6 +4,7 @@ const { Telegraf, session, Stage, BaseScene } = require('telegraf')
 const { BOT_TOKEN, button_regex } = process.env
 var fs = require('fs');
 const stage = new Stage();
+let message_id = false
 
 function chunkArrayInGroups(arr, size) {
     var myArray = [];
@@ -38,21 +39,21 @@ const init = async (bot,) => {
      */
     // bot.hears(/[\S\s]*/, hearsHandler())
     bot.on('new_chat_members', async (ctx) => {
-        try {
-            await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    obj = JSON.parse(data); //now it an object
-                    button = obj.welcome[0]
-                    message = button.message
-                    url = button.url
-                    await ctx.reply(`${message}`, { reply_markup: { inline_keyboard: url } })
-                }
-            });
-        } catch (err) {
-            ctx.reply(err)
-        }
+        await ctx.deleteMessage().catch(err => console.log("errr"))
+        if (message_id)
+            await ctx.deleteMessage(message_id).catch(err => console.log("errr"))
+        await fs.readFile('welcome.json', 'utf8', async function readFileCallback(err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                obj = JSON.parse(data); //now it an object
+                button = obj.welcome[0]
+                message = button.message
+                url = button.url
+                message = await ctx.reply(`${message}`, { reply_markup: { inline_keyboard: url } }).catch(console.log)
+                message_id = message.message_id
+            }
+        });
 
     })
     // bot.on('left_chat_member', leftChatMemberHandler())
@@ -90,7 +91,7 @@ const init = async (bot,) => {
                     button = obj.welcome[0]
                     message = button.message
                     url = button.url
-                    await ctx.telegram.sendMessage(username, `${message}`, { reply_markup: { inline_keyboard: url } })
+                    await ctx.telegram.sendMessage(username, `${message}`, { reply_markup: { inline_keyboard: url } }).catch(console.log)
                 }
             });
         } catch (err) {
@@ -108,10 +109,10 @@ const init = async (bot,) => {
         ctx.session.welcomemsg = ctx.message.text;
         await ctx.reply(`
 Now Enter Button Url In Each New Line ex-
-(buttontext1)[buttonurl://google.com]
-(buttontext2)[buttonurl://google.com]
-(buttontext3)[buttonurl://google.com]
-        `)
+buttontext1 google.com
+buttontext2 google.com
+buttontext3 google.com
+        `).catch(console.log)
         ctx.scene.enter("set-welcomebutton")
     })
 
@@ -141,7 +142,7 @@ Now Enter Button Url In Each New Line ex-
         }
         );
 
-        await ctx.reply("Welcome Welcome As Been Set Remove And ReAdd The Bot To See Message", { reply_markup: { inline_keyboard: buttonsdata } })
+        await ctx.reply("Welcome Welcome As Been Set Remove And ReAdd The Bot To See Message", { reply_markup: { inline_keyboard: buttonsdata } }).catch(console.log)
         ctx.scene.leave()
     })
 
